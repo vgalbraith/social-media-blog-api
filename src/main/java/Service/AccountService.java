@@ -16,7 +16,7 @@ public class AccountService {
     /**
      * Uses the AccountDAO to persist an Account. The given Account will not have an account_id provided.
      * @param account An Account object.
-     * @return The persisted Account if the persistence is successful.
+     * @return The persisted Account if the persistence is successful, otherwise null.
      */
     public Account addAccount(Account account) {
         if (account.getUsername() == "" || 
@@ -26,5 +26,19 @@ public class AccountService {
         } else {
             return accountDAO.insertAccount(account);
         }
+    }
+
+    /**
+     * Uses the AccountDAO to verify a login.
+     * @param username The provided username.
+     * @param password The provided password.
+     * @return The matching Account if the login is valid, otherwise null.
+     */
+    public Account getAccountByLogin(String username, String password) {
+        Account verifiedAccount = accountDAO.getAccountByUsername(username);
+        if (verifiedAccount == null || !verifiedAccount.getPassword().equals(password)) {
+            return null;
+        }
+        return verifiedAccount;
     }
 }
