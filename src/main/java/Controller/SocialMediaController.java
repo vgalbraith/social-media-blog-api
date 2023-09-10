@@ -2,11 +2,12 @@ package Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import Model.Account;
-import Service.AccountService;
-import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.Javalin;
+import Model.Account;
+import Model.Message;
+import Service.AccountService;
+import Service.MessageService;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -15,6 +16,7 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
     AccountService accountService = new AccountService();
+    MessageService messageService = new MessageService();
 
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
@@ -26,6 +28,7 @@ public class SocialMediaController {
         app.get("example-endpoint", this::exampleHandler);
         app.post("/register", this::postAccountHandler);
         app.post("/login", this::postLoginHandler);
+        app.post("/messages", this::postMessageHandler);
 
         return app;
     }
@@ -63,12 +66,27 @@ public class SocialMediaController {
     }
 
     /**
+     * Handler to post a new message.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
+     */
+    private void postMessageHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(context.body(), Message.class);
+        Message addedMessage = messageService.addMessage(message);
+        if (addedMessage != null) {
+            context.json(mapper.writeValueAsString(addedMessage));
+        } else {
+            context.status(400);
+        }
+    }
+
+    /**
      * This is an example handler for an example endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void exampleHandler(Context context) {
         context.json("sample text");
     }
-
 
 }

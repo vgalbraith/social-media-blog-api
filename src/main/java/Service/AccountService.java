@@ -1,7 +1,7 @@
 package Service;
 
-import Model.Account;
 import DAO.AccountDAO;
+import Model.Account;
 
 public class AccountService {
     private AccountDAO accountDAO;
@@ -19,7 +19,7 @@ public class AccountService {
      * @return The persisted Account if the persistence is successful, otherwise null.
      */
     public Account addAccount(Account account) {
-        if (account.getUsername() == "" || 
+        if (account.getUsername().equals("") || 
             account.getPassword().length() < 4 ||
             accountDAO.getAccountByUsername(account.getUsername()) != null) {
             return null;
