@@ -31,6 +31,7 @@ public class SocialMediaController {
         app.post("/login", this::postLoginHandler);
         app.post("/messages", this::postMessageHandler);
         app.get("/messages", this::getMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessageHandler);
 
         return app;
     }
@@ -84,13 +85,28 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler to get all messages.
+     * Handler to get all Messages.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
      */
-    private void getMessagesHandler(Context context) throws JsonProcessingException {
+    private void getMessagesHandler(Context context) {
         List<Message> messages = messageService.getAllMessages();
         context.json(messages);
+    }
+
+    /**
+     * Handler to get a Message, identified by its message_id.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
+     */
+    private void getMessageHandler(Context context) {
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+        Message message = messageService.getMessage(message_id);
+        if (message != null) {
+            context.json(message);
+        } else {
+            context.json("");
+        }
     }
 
     /**

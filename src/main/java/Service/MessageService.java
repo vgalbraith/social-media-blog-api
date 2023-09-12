@@ -10,7 +10,7 @@ public class MessageService {
     private MessageDAO messageDAO;
 
     /**
-     * No-args constructor for creating a new AccountService with a new AccountDAO.
+     * No-args constructor for creating a new AccountService with new AccountDAO and MessageDAO objects.
      */
     public MessageService() {
         accountDAO = new AccountDAO();
@@ -38,5 +38,14 @@ public class MessageService {
      */
     public List<Message> getAllMessages() {
         return messageDAO.getAllMessages();
+    }
+    
+    /**
+     * Uses the MessageDAO to get a Message, identified by its message_id.
+     * @param message_id
+     * @return The Message if found, otherwise null.
+     */
+    public Message getMessage(int message_id) {
+        return messageDAO.getMessage(message_id);
     }
 }
