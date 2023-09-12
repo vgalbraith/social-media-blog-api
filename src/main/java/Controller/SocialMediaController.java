@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 import io.javalin.Javalin;
+import java.util.List;
 import Model.Account;
 import Model.Message;
 import Service.AccountService;
@@ -29,6 +30,7 @@ public class SocialMediaController {
         app.post("/register", this::postAccountHandler);
         app.post("/login", this::postLoginHandler);
         app.post("/messages", this::postMessageHandler);
+        app.get("/messages", this::getMessagesHandler);
 
         return app;
     }
@@ -79,6 +81,16 @@ public class SocialMediaController {
         } else {
             context.status(400);
         }
+    }
+
+    /**
+     * Handler to get all messages.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
+     */
+    private void getMessagesHandler(Context context) throws JsonProcessingException {
+        List<Message> messages = messageService.getAllMessages();
+        context.json(messages);
     }
 
     /**
