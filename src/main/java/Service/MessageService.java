@@ -11,7 +11,7 @@ public class MessageService {
     private MessageDAO messageDAO;
 
     /**
-     * No-args constructor for creating a new AccountService with new AccountDAO and MessageDAO objects.
+     * No-args constructor for creating a new AccountService with new AccountDAO && MessageDAO objects.
      */
     public MessageService() {
         accountDAO = new AccountDAO();
@@ -19,8 +19,8 @@ public class MessageService {
     }
     
     /**
-     * Uses the MessageDAO to persist a Message. The given Message will not have an message_id provided.
-     * @param account A Message object.
+     * Uses the MessageDAO to persist a Message. The given Message will not have a message_id provided.
+     * @param message A Message object.
      * @return The persisted Message if the persistence is successful, otherwise null.
      */
     public Message addMessage(Message message) {
@@ -42,9 +42,9 @@ public class MessageService {
     }
     
     /**
-     * Uses the MessageDAO to get a Message, identified by its message_id.
+     * Uses the MessageDAO to retrieve a Message, identified by its message_id.
      * @param message_id
-     * @return The Message, may be null if Message did not exist.
+     * @return the Message, may be null if message_id is invalid.
      */
     public Message getMessage(int message_id) {
         return messageDAO.getMessage(message_id);
@@ -53,7 +53,7 @@ public class MessageService {
     /**
      * Uses the MessageDAO to delete a Message, identified by its message_id.
      * @param message_id
-     * @return The Message, may be null if Message did not exist.
+     * @return The Message, may be null if message_id is invalid.
      */
     public Message deleteMessage(int message_id) {
         Message message = messageDAO.getMessage(message_id);
@@ -69,7 +69,7 @@ public class MessageService {
      * Uses the MessageDAO to update a Message's message_text, identified by its message_id.
      * @param message_id
      * @param message_text New message_text to update the Message with.
-     * @return The Message, may be null if mMssage did not exist.
+     * @return The Message, may be null if message_id or message_text is invalid.
      */
     public Message updateMessage(int message_id, String message_text) {
         Message message = messageDAO.getMessage(message_id);
@@ -85,12 +85,12 @@ public class MessageService {
     /**
      * Uses the MessageDAO to retrieve all Messages written by a particular user, identified by their account_id.
      * @param account_id
-     * @return List of Messages written by the particular user, may be empty if user wrote no Messages.
+     * @return a List of Messages written by the particular user, may be empty if no Messages were written by the particluar user or if the account_id is invalid.
      */
-    public List<Message> getAllMessagesFromUser(int account_id) {
+    public List<Message> getAllMessagesByAccount_id(int account_id) {
         List<Message> messages = new ArrayList<Message>();
         if (accountDAO.getAccountById(account_id) != null) {
-            messages = messageDAO.getAllMessagesFromUser(account_id);
+            messages = messageDAO.getAllMessagesByAccount_id(account_id);
         }
         return messages;
     }

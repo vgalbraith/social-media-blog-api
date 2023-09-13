@@ -29,11 +29,11 @@ public class SocialMediaController {
         app.post("/register", this::postAccountHandler);
         app.post("/login", this::postLoginHandler);
         app.post("/messages", this::postMessageHandler);
-        app.get("/messages", this::getMessagesHandler);
+        app.get("/messages", this::getAllMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
         app.patch("/messages/{message_id}", this::patchMessageHandler);
-        app.get("/accounts/{account_id}/messages", this::getMessagesFromUserHandler);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesByAccount_idHandler);
         return app;
     }
 
@@ -92,7 +92,7 @@ public class SocialMediaController {
      * Handler to get all Messages.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
-    private void getMessagesHandler(Context context) {
+    private void getAllMessagesHandler(Context context) {
         List<Message> messages = messageService.getAllMessages();
         context.json(messages);
     }
@@ -150,12 +150,11 @@ public class SocialMediaController {
     /**
      * Handler to get all messages written by a particular user, identified by their account_id.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
-     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
      */
-    private void getMessagesFromUserHandler(Context context) {
+    private void getAllMessagesByAccount_idHandler(Context context) {
         int account_id = Integer.parseInt(context.pathParam("account_id"));
 
-        List<Message> messages = messageService.getAllMessagesFromUser(account_id);
+        List<Message> messages = messageService.getAllMessagesByAccount_id(account_id);
         context.json(messages);
     }
 }
