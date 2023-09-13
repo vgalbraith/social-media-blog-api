@@ -67,6 +67,7 @@ public class MessageDAO {
     
     /**
      * Retrieves a Message from the Message table, identified by its message_id.
+     * @param message_id
      * @return Message if found, null otherwise.
      */
     public Message getMessage(int message_id) {
@@ -89,5 +90,22 @@ public class MessageDAO {
             System.out.println(e.getMessage());
         }
         return null;
+    }
+    
+    /**
+     * Deletes a Message from the Message table, identified by its message_id.
+     * @param message_id
+     */
+    public void deleteMessage(int message_id) {
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "DELETE FROM Message WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setInt(1, message_id);
+            preparedStatement.executeUpdate();
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
     }
 }

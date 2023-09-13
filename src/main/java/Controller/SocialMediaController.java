@@ -26,12 +26,12 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
         app.post("/register", this::postAccountHandler);
         app.post("/login", this::postLoginHandler);
         app.post("/messages", this::postMessageHandler);
         app.get("/messages", this::getMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageHandler);
 
         return app;
     }
@@ -110,11 +110,17 @@ public class SocialMediaController {
     }
 
     /**
-     * This is an example handler for an example endpoint.
+     * Handler to delete a Message, identified by its message_id.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
      */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
+    private void deleteMessageHandler(Context context) {
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+        Message message = messageService.deleteMessage(message_id);
+        if (message != null) {
+            context.json(message);
+        } else {
+            context.json("");
+        }
     }
-
 }

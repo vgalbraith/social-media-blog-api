@@ -43,9 +43,22 @@ public class MessageService {
     /**
      * Uses the MessageDAO to get a Message, identified by its message_id.
      * @param message_id
-     * @return The Message if found, otherwise null.
+     * @return The Message, may be null if message did not exist.
      */
     public Message getMessage(int message_id) {
         return messageDAO.getMessage(message_id);
+    }
+    
+    /**
+     * Uses the MessageDAO to delete a Message, identified by its message_id.
+     * @param message_id
+     * @return The Message, may be null if message did not exist.
+     */
+    public Message deleteMessage(int message_id) {
+        Message message = messageDAO.getMessage(message_id);
+        if (message != null) {
+            messageDAO.deleteMessage(message_id);
+        }
+        return message;
     }
 }
