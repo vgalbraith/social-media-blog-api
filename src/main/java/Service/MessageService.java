@@ -61,4 +61,19 @@ public class MessageService {
         }
         return message;
     }
+    
+    /**
+     * Uses the MessageDAO to update a Message's message_text, identified by its message_id.
+     * @param message_id
+     * @param message_text New message_text to update the Message with.
+     * @return The Message, may be null if message did not exist.
+     */
+    public Message updateMessage(int message_id, String message_text) {
+        Message message = messageDAO.getMessage(message_id);
+        if (message != null) {
+            messageDAO.updateMessage(message_id, message_text);
+            message.setMessage_text(message_text);
+        }
+        return message;
+    }
 }

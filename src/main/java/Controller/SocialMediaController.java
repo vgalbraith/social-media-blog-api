@@ -32,6 +32,7 @@ public class SocialMediaController {
         app.get("/messages", this::getMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
+        app.patch("/messages/{message_id}", this::patchMessageHandler);
 
         return app;
     }
@@ -87,7 +88,6 @@ public class SocialMediaController {
     /**
      * Handler to get all Messages.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
-     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
      */
     private void getMessagesHandler(Context context) {
         List<Message> messages = messageService.getAllMessages();
@@ -97,7 +97,6 @@ public class SocialMediaController {
     /**
      * Handler to get a Message, identified by its message_id.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
-     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
      */
     private void getMessageHandler(Context context) {
         int message_id = Integer.parseInt(context.pathParam("message_id"));
@@ -112,7 +111,6 @@ public class SocialMediaController {
     /**
      * Handler to delete a Message, identified by its message_id.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
-     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
      */
     private void deleteMessageHandler(Context context) {
         int message_id = Integer.parseInt(context.pathParam("message_id"));
@@ -121,6 +119,24 @@ public class SocialMediaController {
             context.json(message);
         } else {
             context.json("");
+        }
+    }
+
+    /**
+     * Handler to update a Message, identified by its message_id.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
+     */
+    private void patchMessageHandler(Context context) throws JsonProcessingException {
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(context.body(), Message.class);
+        String message_text = message.getMessage_text();
+        Message updatedMessage = messageService.updateMessage(message_id, message_text);
+        if (!message_text.equals("") && message_text.length() < 255 && updatedMessage != null) {
+            context.json(mapper.writeValueAsString(updatedMessage));
+        } else {
+            context.status(400);
         }
     }
 }

@@ -108,4 +108,23 @@ public class MessageDAO {
             System.out.println(e.getMessage());
         }
     }
+    
+    /**
+     * Updates the message_text of a Message in the Message table, identified by its message_id.
+     * @param message_id
+     * @param message_text New message_text to update the Message with.
+     */
+    public void updateMessage(int message_id, String message_text) {
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "UPDATE Message SET message_text = ? WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, message_text);
+            preparedStatement.setInt(2, message_id);
+            preparedStatement.executeUpdate();
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
 }
