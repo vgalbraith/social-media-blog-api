@@ -33,7 +33,7 @@ public class SocialMediaController {
         app.get("/messages/{message_id}", this::getMessageHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
         app.patch("/messages/{message_id}", this::patchMessageHandler);
-
+        app.get("/accounts/{account_id}/messages", this::getMessagesFromUserHandler);
         return app;
     }
 
@@ -46,6 +46,7 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
+
         if (addedAccount != null) {
             context.json(mapper.writeValueAsString(addedAccount));
         } else {
@@ -62,6 +63,7 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
         Account verifiedAccount = accountService.getAccountByLogin(account.getUsername(), account.getPassword());
+
         if (verifiedAccount != null) {
             context.json(mapper.writeValueAsString(verifiedAccount));
         } else {
@@ -78,6 +80,7 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
         Message addedMessage = messageService.addMessage(message);
+
         if (addedMessage != null) {
             context.json(mapper.writeValueAsString(addedMessage));
         } else {
@@ -100,6 +103,7 @@ public class SocialMediaController {
      */
     private void getMessageHandler(Context context) {
         int message_id = Integer.parseInt(context.pathParam("message_id"));
+
         Message message = messageService.getMessage(message_id);
         if (message != null) {
             context.json(message);
@@ -114,6 +118,7 @@ public class SocialMediaController {
      */
     private void deleteMessageHandler(Context context) {
         int message_id = Integer.parseInt(context.pathParam("message_id"));
+
         Message message = messageService.deleteMessage(message_id);
         if (message != null) {
             context.json(message);
@@ -123,20 +128,34 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler to update a Message, identified by its message_id.
+     * Handler to update the message_text of a Message, identified by its message_id.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
      */
     private void patchMessageHandler(Context context) throws JsonProcessingException {
         int message_id = Integer.parseInt(context.pathParam("message_id"));
+
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
         String message_text = message.getMessage_text();
+
         Message updatedMessage = messageService.updateMessage(message_id, message_text);
-        if (!message_text.equals("") && message_text.length() < 255 && updatedMessage != null) {
+        if (updatedMessage != null) {
             context.json(mapper.writeValueAsString(updatedMessage));
         } else {
             context.status(400);
         }
+    }
+
+    /**
+     * Handler to get all messages written by a particular user, identified by their account_id.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException Thrown if there is an issue converting JSON into an object.
+     */
+    private void getMessagesFromUserHandler(Context context) {
+        int account_id = Integer.parseInt(context.pathParam("account_id"));
+
+        List<Message> messages = messageService.getAllMessagesFromUser(account_id);
+        context.json(messages);
     }
 }

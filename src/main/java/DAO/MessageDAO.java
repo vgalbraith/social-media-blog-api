@@ -127,4 +127,31 @@ public class MessageDAO {
             System.out.println(e.getMessage());
         }
     }
+    
+    /**
+     * Retrieve all Messages from the Message table written by a particular user, identified by their account_id.
+     * @param posted_by The account_id of the particlar user.
+     * @return all Messages from the Message table written by the particular user.
+     */
+    public List<Message> getAllMessagesFromUser(int posted_by) {
+        Connection connection = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM Message WHERE posted_by = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, posted_by);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Message message = new Message(rs.getInt("message_id"),
+                                              rs.getInt("posted_by"),
+                                              rs.getString("message_text"),
+                                              rs.getLong("time_posted_epoch"));
+                messages.add(message);
+            }
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return messages;
+    }
 }
